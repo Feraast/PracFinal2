@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <!-- <link rel="stylesheet" href="css/api.css"> -->
+</head>
+
+<body onload="showJokes();">
+
+
+  <div class="showSetup" name="showSetup"> </div>
+  <div class="showDelivery" name="showDelivery"> </div>
+
+
+  <form method="post" action="/handleJokes">
+    <input type="text" id="noJokes" name="noJokes" value=""><br><br>
+    <input type="submit" value="Average words">
+  </form>
+
+
+  <!-- Put the average number of words in the last n jokes here -->
+  <div class="averageWords"></div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.m
+in.js"></script>
+  <script>
+
+    function showJokes() {
+      var cors_proxy = "https://cors-anywhere.herokuapp.com/";
+      $(".showSetup").empty();
+      $(".showDelivery").empty();
+
+      $.ajax({
+        type: "GET",
+        dataType: 'JSON',
+        url: cors_proxy +
+
+          "https://sv443.net/jokeapi/v2/joke/Any?type=twopart"
+
+      }).done(function (response) {
+        console.log("success");
+        console.log(response);
+        console.log(response.setup);
+        $(".showSetup").append("<p class='setup'>" +
+          response.setup + "</p>");
+
+        $(".showDelivery").append("<p class='delivery'>" +
+          response.delivery + "</p>");
+
+        // const newJoke = new Joke({
+
+        //   setup: response.setup,
+        //   delivery: response.delivery
+
+        // });
+
+        // newJoke.save().then(console.log("Saved!"));
+
+
+      })
+
+    }
+
+    setInterval(showJokes, 1000 * 29);
+
+    function saveJoke(){
+
+    // I need to save the contents of the div to my DB. 
+    $.post("http://localhost:3422/saveJoke",
+      {
+        setup: $(".showSetup").text(),
+        delivery: $(".showDelivery").text()
+      },
+      function (data, status) {
+        alert("Data: " + data + "\nStatus: " + status);
+      });
+
+    };
+
+    setInterval(saveJoke,1000*30);
+
+
+
+  </script>
+</body>
+
+</html>
